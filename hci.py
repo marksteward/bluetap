@@ -14,7 +14,7 @@ def get_dev(addr=''):
   return id
 
 def open_dev(addr=''):
-	return hci_open_dev(get_dev(addr=addr))
+  return hci_open_dev(get_dev(addr=addr))
 
 class hci_filter(object):
   def __init__(self, sock, flt=None):

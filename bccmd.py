@@ -2,10 +2,10 @@
 from struct import pack, unpack_from
 
 from bluetooth._bluetooth import \
-	hci_send_req, \
-	hci_open_dev, \
-	OGF_VENDOR_CMD, \
-	EVT_VENDOR
+  hci_send_req, \
+  hci_open_dev, \
+  OGF_VENDOR_CMD, \
+  EVT_VENDOR
 
 
 class Bccmd(object):
