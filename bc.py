@@ -13,7 +13,7 @@ class Bluecore(object):
     self.regs = Registers(self)
 
   def is_flash(self):
-    return self.regs.chipinfo & 0x4000
+    return bool(self.regs.chipinfo & 0x4000)
 
   @contextmanager
   def flashpage(self, page):
@@ -25,6 +25,8 @@ class Bluecore(object):
 
 
 def test_flash(bc):
+  print bc.is_flash()
+  print
   with bc.flashpage(0):
     print hci.hexdump(bc.bccmd.read(0x8000, 0x40))
   print
