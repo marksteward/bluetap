@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from bluetooth._bluetooth import *
+from contextlib import contextmanager
 
 def hexdump(d):
   return '\n'.join(
@@ -16,24 +17,17 @@ def get_dev(addr=''):
 def open_dev(addr=''):
   return hci_open_dev(get_dev(addr=addr))
 
-class hci_filter(object):
-  def __init__(self, sock, flt=None):
-    self.sock = sock
-    if flt:
-      self.flt = flt
-    else:
-      self.flt = hci_filter_new()
-      hci_filter_all_ptypes(self.flt)
-      hci_filter_all_events(self.flt)
+@contextmanager
+def hci_filter(sock, flt=None):
+  if not flt:
+    flt = hci_filter_new()
+    hci_filter_all_ptypes(flt)
+    hci_filter_all_events(flt)
 
-  def __enter__(self):
-    self.oldflt = self.sock.getsockopt(SOL_HCI, HCI_FILTER, len(self.flt))
-    self.sock.setsockopt(SOL_HCI, HCI_FILTER, self.flt)
-
-    return self
-
-  def __exit__(self, exc_type, exc_value, traceback):
-    self.sock.setsockopt(SOL_HCI, HCI_FILTER, self.oldflt)
+  oldflt = sock.getsockopt(SOL_HCI, HCI_FILTER, len(flt))
+  sock.setsockopt(SOL_HCI, HCI_FILTER, flt)
+  yield flt
+  sock.setsockopt(SOL_HCI, HCI_FILTER, oldflt)
 
 
 def test_bdaddr(s):
