@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from struct import pack, unpack_from
 
 from bluetooth._bluetooth import \
@@ -7,8 +6,12 @@ from bluetooth._bluetooth import \
   OGF_VENDOR_CMD, \
   EVT_VENDOR
 
+from csr_const import *
 
-class Bccmd(object):
+class BccmdTransport(object):
+  pass
+
+class BccmdHCI(BccmdTransport):
   def __init__(self, sock, timeout=2000):
     self.sock = sock
     self.seqnum = 0
@@ -45,4 +48,64 @@ class Bccmd(object):
     self.seqnum += 1
     return resp[11:size * 2 + 1]
 
+
+class Bccmd(object):
+  def __init__(self, transport):
+    self.transport = transport
+
+  def rand(self):
+    resp = self.transport.get(CSR_VARID_RAND, '')
+    rand, = unpack_from('<H', resp)
+    return rand
+
+  def clock(self):
+    resp = self.transport.get(CSR_VARID_BT_CLOCK, '')
+    high, low = unpack_from('<HH', resp)
+    return low + high * 0x10000
+
+  def warm_reset(self):
+    self.transport.put(CSR_VARID_WARM_RESET, '')
+
+  def warm_halt(self):
+    self.transport.put(CSR_VARID_WARM_HALT, '')
+
+  def cold_reset(self):
+    self.transport.put(CSR_VARID_COLD_RESET, '')
+
+  def cold_halt(self):
+    self.transport.put(CSR_VARID_COLD_HALT, '')
+
+  def read(self, addr, length):
+    args = pack('<HHH', addr, length, 0)
+    resp = self.transport.get(CSR_VARID_MEMORY, args + '\0' * length * 2)
+    _addr, _length, reserved = unpack_from('<HHH', resp)
+    if _addr != addr:
+      raise IOError('Unexpected addr 0x%x (0x%x)' % (_addr, addr))
+    elif _length != length:
+      raise IOError('Unexpected length 0x%x (0x%x)' % (_length, length))
+    return resp[6:]
+
+  def write(self, addr, data):
+    if len(data) % 2:
+      raise ValueError('Data length not word-aligned')
+
+    args = pack('<HHH', addr, len(data) / 2, 0)
+    self.transport.put(CSR_VARID_MEMORY, args + data)
+
+
+
+if __name__ == '__main__':
+  import sys
+  import hci
+
+  s = hci.open_dev(*sys.argv[1:])
+  bccmd = Bccmd(BccmdHCI(s))
+
+  print hex(bccmd.rand())
+  print hex(bccmd.rand())
+  print hex(bccmd.clock())
+  print hex(bccmd.clock())
+  print hex(bccmd.clock())
+  print hex(bccmd.clock())
+  bccmd.warm_reset()
 

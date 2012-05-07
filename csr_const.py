@@ -500,6 +500,3 @@ CSR_PSKEY_AMUX_AIO3                                     = 0x0422 # ana_amux_sel
 CSR_PSKEY_LOCAL_NAME_SIMPLIFIED                         = 0x0423 # local_name_complete
 CSR_PSKEY_EXTENDED_STUB                                 = 0x2001 # uint16
 
-# bc2/3?
-CSR_FLASHPAGE = 0x73
-

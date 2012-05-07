@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from bluetooth._bluetooth import *
 from contextlib import contextmanager
 
