@@ -22,6 +22,7 @@
 CSR_VARID_PS_CLR_ALL                    = 0x000b # valueless
 CSR_VARID_PS_FACTORY_SET                = 0x000c # valueless
 CSR_VARID_PS_CLR_ALL_STORES             = 0x082d # uint16
+CSR_VARID_MEMORY                        = 0x1001 # complex
 CSR_VARID_BC01_STATUS                   = 0x2801 # uint16
 CSR_VARID_BUILDID                       = 0x2819 # uint16
 CSR_VARID_CHIPVER                       = 0x281a # uint16
@@ -498,4 +499,7 @@ CSR_PSKEY_AMUX_AIO2                                     = 0x0421 # ana_amux_sel
 CSR_PSKEY_AMUX_AIO3                                     = 0x0422 # ana_amux_sel
 CSR_PSKEY_LOCAL_NAME_SIMPLIFIED                         = 0x0423 # local_name_complete
 CSR_PSKEY_EXTENDED_STUB                                 = 0x2001 # uint16
+
+# bc2/3?
+CSR_FLASHPAGE = 0x73
 
