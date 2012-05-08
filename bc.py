@@ -26,8 +26,12 @@ class Bluecore(object):
 
 def test_flash(bc):
   print bc.is_flash()
-  print
   with bc.flashpage(0):
+    print bc.regs.flashpage,
+    bc.regs._flashpage = 0x3f
+    print bc.regs.flashpage, bc.regs._flashpage
+    bc.regs._flashpage = 0
+    print
     print hci.hexdump(bc.bccmd.read(0x8000, 0x40))
   print
   with bc.flashpage(0x40):
