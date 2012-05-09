@@ -43,6 +43,7 @@ class CachedRAM(object):
 
 if __name__ == '__main__':
   import sys
+  import time
   import hci
   from bccmd import Bccmd, BccmdHCI
 
@@ -50,16 +51,20 @@ if __name__ == '__main__':
   bccmd = Bccmd(BccmdHCI(s))
   cache = CachedRAM(bccmd)
 
-  print hci.hexdump(bccmd.read(0x0, 0x60))
+  print hci.hexdump(bccmd.read(0xffb0, 0x10))
   print
-  print hci.hexdump(bccmd.read(0x20, 0x60))
+  print hci.hexdump(bccmd.read(0xffb4, 0x2))
+  time.sleep(0.1)
+  print hci.hexdump(bccmd.read(0xffb4, 0x2))
   print
-  print hci.hexdump(cache.read(0x0, 0x60))
+  print hci.hexdump(cache.read(0xffb0, 0x10))
   print
-  print hci.hexdump(cache.read(0x20, 0x60))
+  print hci.hexdump(cache.read(0xffb4, 0x2))
+  time.sleep(0.1)
+  print hci.hexdump(cache.read(0xffb4, 0x2))
   print
   print hci.hexdump(cache.read(0x100, 0x10))
   print
   #while True:
-  #  print hci.hexdump(bccmd.read(0x100, 0x10))
+  #  print hci.hexdump(bccmd.read(0xffb4, 0x2))
 
