@@ -22,6 +22,20 @@ class Bluecore(object):
     yield oldpage
     self.regs.flashpage = oldpage
 
+  @contextmanager
+  def sampler(self, addr):
+    # TODO: this should perhaps be a couple of helpers in regs.py
+    if 0xff80 <= addr <= 0xffff:
+      addr -= 0xff00
+    if not 0 <= addr <= 0xff:
+      raise ValueError('Address %04x does not fit into a byte' % addr)
+    oldreg = self.regs.sampler
+    oldunknown, oldaddr = divmod(oldreg, 0x100)
+    self.regs.sampler = oldunknown * 0x100 + (addr & 0xff)
+    if 0x80 <= oldaddr <= 0xff:
+      oldaddr += 0xff00
+    yield oldaddr
+    self.regs.sampler = oldreg
 
 
 def test_flash(bc):
@@ -36,6 +50,15 @@ def test_flash(bc):
   print
   with bc.flashpage(0x40):
     print hexdump(bc.bccmd.read(0x8000, 0x40))
+
+
+def test_sampler(bc):
+  with bc.sampler(bc.regs['clock'].low):
+    print hex(bc.regs._clock)
+    print hexdump(bc.bccmd.read(0x9000, 0x20))
+    print hexdump(bc.bccmd.read(0x9000, 0x20))
+    print hex(bc.regs._clock)
+
 
 def dump_flash(bc):
   oldpage = bc.regs.flashpage
@@ -54,6 +77,7 @@ if __name__ == '__main__':
 
   handlers = [
     'testflash', test_flash,
+    'testsampler', test_sampler,
     'dumpflash', dump_flash,
   ]
 
