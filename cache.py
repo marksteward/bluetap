@@ -1,4 +1,5 @@
 from struct import pack, unpack
+from bccmd import hexdump
 
 class CachedRAM(object):
   def __init__(self, bccmd, linesize=0x20):
@@ -51,20 +52,22 @@ if __name__ == '__main__':
   bccmd = Bccmd(BccmdHCI(s))
   cache = CachedRAM(bccmd)
 
-  print hci.hexdump(bccmd.read(0xffb0, 0x10))
+  print hexdump(bccmd.read(0xffb0, 0x10))
   print
-  print hci.hexdump(bccmd.read(0xffb4, 0x2))
+  print hexdump(bccmd.read(0xffb4, 0x2))
   time.sleep(0.1)
-  print hci.hexdump(bccmd.read(0xffb4, 0x2))
+  print hexdump(bccmd.read(0xffb4, 0x2))
   print
-  print hci.hexdump(cache.read(0xffb0, 0x10))
+  print hexdump(cache.read(0xffb0, 0x10))
   print
-  print hci.hexdump(cache.read(0xffb4, 0x2))
+  print hexdump(cache.read(0xffb4, 0x2))
   time.sleep(0.1)
-  print hci.hexdump(cache.read(0xffb4, 0x2))
+  print hexdump(cache.read(0xffb4, 0x2))
   print
-  print hci.hexdump(cache.read(0x100, 0x10))
+  print hexdump(cache.read(0x100, 0x10))
   print
-  #while True:
-  #  print hci.hexdump(bccmd.read(0xffb4, 0x2))
+  while True:
+    print hexdump(bccmd.read(0x67, 0x40))
+    print
+    time.sleep(0.1)
 

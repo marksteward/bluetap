@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from contextlib import contextmanager
 
-from bccmd import Bccmd, BccmdHCI
+from bccmd import Bccmd, BccmdHCI, hexdump
 from cache import CachedRAM
 from regs import Registers
 
@@ -32,10 +32,10 @@ def test_flash(bc):
     print bc.regs.flashpage, bc.regs._flashpage
     bc.regs._flashpage = 0
     print
-    print hci.hexdump(bc.bccmd.read(0x8000, 0x40))
+    print hexdump(bc.bccmd.read(0x8000, 0x40))
   print
   with bc.flashpage(0x40):
-    print hci.hexdump(bc.bccmd.read(0x8000, 0x40))
+    print hexdump(bc.bccmd.read(0x8000, 0x40))
 
 def dump_flash(bc):
   oldpage = bc.regs.flashpage

@@ -8,6 +8,14 @@ from bluetooth._bluetooth import \
 
 from csr_const import *
 
+def hexdump(d):
+  def lines(d):
+    for i in range(0, len(d), 32):
+      l = d[i:i+32]
+      ws = unpack_from('<' + 'H' * (len(l) / 2), l)
+      yield ' '.join('%04x' % w for w in ws)
+  return '\n'.join(lines(d))
+
 class BccmdTransport(object):
   pass
 
@@ -107,5 +115,7 @@ if __name__ == '__main__':
   print hex(bccmd.clock())
   print hex(bccmd.clock())
   print hex(bccmd.clock())
-  bccmd.warm_reset()
+  print hexdump(bccmd.read(0xff97, 2))
+  print hexdump(bccmd.read(0xff9a, 2))
+  #bccmd.warm_reset()
 
