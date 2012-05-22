@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from bccmd import Bccmd, BccmdHCI, hexdump
 from cache import CachedRAM
 from regs import Registers
+from buffers import Buffers
 
 
 class Bluecore(object):
@@ -11,6 +12,7 @@ class Bluecore(object):
     self.bccmd = bccmd
     self.cache = CachedRAM(bccmd)
     self.regs = Registers(self)
+    self.buffers = Buffers(self)
 
   def is_flash(self):
     return bool(self.regs.chipinfo & 0x4000)
@@ -60,6 +62,17 @@ def test_sampler(bc):
     print hex(bc.regs._clock)
 
 
+def list_buffers(bc):
+  print 'buffer1: %02x' % bc.regs._buffer1
+  print 'buffer2: %02x' % bc.regs._buffer2
+  for i, buf in enumerate(bc.buffers):
+    if buf.locked:
+      print '%02x (locked)>' % i
+    else:
+      print '%02x (%04x for %02x words): %04x' % (
+        i, buf.pt, buf.numpages / 2, buf.pointer)
+
+
 def dump_flash(bc):
   oldpage = bc.regs.flashpage
   for page in range(0x40):
@@ -68,6 +81,10 @@ def dump_flash(bc):
       sys.stdout.write(bc.bccmd.read(i, 0x40))
 
   bc.regs.flashpage = oldpage
+
+
+def read_memory(bc, addr, size):
+  print hexdump(bc.bccmd.read(int(addr, 0), int(size, 0)))
 
 
 if __name__ == '__main__':
@@ -79,6 +96,8 @@ if __name__ == '__main__':
     'testflash', test_flash,
     'testsampler', test_sampler,
     'dumpflash', dump_flash,
+    'buffers', list_buffers,
+    'read', read_memory,
   ]
 
   usage = 'usage: %prog [options] command\n\nCommands:\n'

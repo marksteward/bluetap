@@ -32,6 +32,9 @@ class Long(Reg):
 
 class Registers(object):
   regs = dict(
+    buffer1 = Int(0x6e),
+    buffer2 = Int(0x6f),
+    pdend = Int(0x70),
     flashpage = Int(0x73),
     sampler = Int(0x75),
     chipinfo = Int(0xff9a),
