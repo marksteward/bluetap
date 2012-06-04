@@ -76,7 +76,7 @@ def list_buffers(bc):
 def dump_flash(bc):
   oldpage = bc.regs.flashpage
   for page in range(0x40):
-    bc.regs.flashpage = page
+    bc.regs.flashpage = page + 0x10
     for i in range(0x8000, 0x9000, 0x40):
       sys.stdout.write(bc.bccmd.read(i, 0x40))
 
